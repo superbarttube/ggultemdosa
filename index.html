@@ -1,10 +1,120 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>Hello World</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>꿀템도사 | 오늘의 꿀템 추천</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", sans-serif;
+      background-color: #fff9f0;
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      background-color: #ffb84d;
+      padding: 30px 10px 20px;
+    }
+
+    header img {
+      width: 120px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      margin-top: 15px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #3a2d16;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #5a3c00;
+      margin-bottom: 30px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      justify-items: center;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 15px;
+      transition: all 0.3s ease;
+      width: 150px;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+
+    iframe {
+      border-radius: 8px;
+      border: none;
+      width: 120px;
+      height: 240px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 10px;
+      background: #ffb84d;
+      color: #3a2d16;
+      font-size: 14px;
+    }
+
+    /* 모바일 (2열) 대응 */
+    @media (max-width: 600px) {
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Hello, World!</h1>
+
+  <header>
+    <img src="chrome_MvcOddibqs.png" alt="꿀템도사 로고" />
+    <h1>꿀템도사</h1>
+  </header>
+
+  <main>
+    <h2>오늘의 꿀템 ✨</h2>
+    <div class="product-grid">
+      <div class="product-card"><iframe src="https://coupa.ng/ckgcd9" referrerpolicy="unsafe-url" scrolling="no"></iframe></div>
+      <div class="product-card"><iframe src="https://coupa.ng/ckgceF" referrerpolicy="unsafe-url" scrolling="no"></iframe></div>
+      <div class="product-card"><!-- 3번 상품 자리 --></div>
+      <div class="product-card"><!-- 4번 상품 자리 --></div>
+      <div class="product-card"><!-- 5번 상품 자리 --></div>
+      <div class="product-card"><!-- 6번 상품 자리 --></div>
+      <div class="product-card"><!-- 7번 상품 자리 --></div>
+      <div class="product-card"><!-- 8번 상품 자리 --></div>
+      <div class="product-card"><!-- 9번 상품 자리 --></div>
+      <div class="product-card"><!-- 10번 상품 자리 --></div>
+    </div>
+  </main>
+
+  <footer>
+    © 꿀템도사 All rights reserved.
+  </footer>
+
 </body>
 </html>
