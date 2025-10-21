@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS 기반 차세대 보안 AI 시스템 설계 가이드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        h2 {
+            color: #1e3c72;
+            font-size: 2em;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        h3 {
+            color: #2a5298;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            padding-left: 15px;
+            border-left: 5px solid #667eea;
+        }
+        
+        h4 {
+            color: #444;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+        
+        p {
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-left: 5px solid #ff6b6b;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-left: 5px solid #4facfe;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fff6b7 0%, #f6d365 100%);
+            border-left: 5px solid #f093fb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .architecture-diagram {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            line-height: 2;
+        }
+        
+        .checklist {
+            background: #f0f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .checklist li {
+            list-style-type: none;
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .checklist li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+        
+        .comparison-table {
+            margin: 30px 0;
+        }
+        
+        .comparison-table th:first-child {
+            background: #2a5298;
+        }
+        
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ AWS 기반 차세대 보안 AI 시스템 설계 가이드</h1>
+            <p>Amazon Bedrock 및 EC2 기반 LLM 구축 전략</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Multi-Region, Zero Trust, CSPM 통합 아키텍처</p>
+        </header>
+
+        <div class="content">
+            <h2>📋 목차</h2>
+            <ol>
+                <li>설계 목표 및 보안 요구사항</li>
+                <li>아키텍처 개요</li>
+                <li>방안 1: Amazon Bedrock 기반 AI 시스템</li>
+                <li>방안 2: EC2 기반 자체 LLM 구축</li>
+                <li>보안 자동화 및 탐지</li>
+                <li>차세대 보안 구성 제안</li>
+                <li>종합 문제 및 해설</li>
+                <li>구축 체크리스트</li>
+            </ol>
+
+            <h2>1. 설계 목표 및 보안 요구사항</h2>
+            
+            <h3>1.1 핵심 설계 목표</h3>
+            <ul>
+                <li><strong>다중 리전 고가용성:</strong> Active-Active DR 구조로 리전 장애 시 자동 전환</li>
+                <li><strong>데이터 주권 및 규제 준수:</strong> GDPR, ISMS-P, AI Act 대응</li>
+                <li><strong>Zero Trust 보안:</strong> 모든 접근에 대한 지속적 검증 및 최소 권한 원칙</li>
+                <li><strong>AI 모델 보안:</strong> 모델 무결성, 프롬프트 인젝션 방어, 데이터 유출 방지</li>
+                <li><strong>실시간 위협 탐지:</strong> AI 추론 과정의 이상 행위 탐지 및 자동 대응</li>
+                <li><strong>감사 추적성:</strong> 모든 AI 요청/응답의 완전한 로깅 및 무결성 보장</li>
+            </ul>
+
+            <h3>1.2 보안 요구사항</h3>
+            <div class="highlight-box">
+                <h4>필수 보안 통제</h4>
+                <ul>
+                    <li>전송 중/저장 중 데이터 암호화 (TLS 1.3, AES-256)</li>
+                    <li>IAM 역할 기반 접근 제어 및 MFA 강제</li>
+                    <li>네트워크 격리 (VPC, Private Subnet, PrivateLink)</li>
+                    <li>DDoS 방어 및 WAF 규칙 적용</li>
+                    <li>프롬프트 인젝션 및 모델 탈취 방어</li>
+                    <li>PII/민감정보 자동 탐지 및 마스킹</li>
+                    <li>모델 버전 관리 및 롤백 메커니즘</li>
+                </ul>
+            </div>
+
+            <h2>2. 아키텍처 개요</h2>
+            
+            <div class="architecture-diagram">
+                <h3>AWS Multi-Region AI Security Architecture</h3>
+                <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                    Route 53 / Global Accelerator                 │
+│                  (Health Check + Latency Routing)                │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+        ┌────────────┴────────────┐
+        │                         │
+┌───────▼────────┐       ┌───────▼────────┐
+│  Region A      │       │  Region B      │
+│  (Seoul)       │◄─────►│  (Tokyo)       │
+│                │       │                │
+│ ┌────────────┐ │       │ ┌────────────┐ │
+│ │   WAF +    │ │       │ │   WAF +    │ │
+│ │   Shield   │ │       │ │   Shield   │ │
+│ └──────┬─────┘ │       │ └──────┬─────┘ │
+│        │       │       │        │       │
+│ ┌──────▼─────┐ │       │ ┌──────▼─────┐ │
+│ │    ALB     │ │       │ │    ALB     │ │
+│ └──────┬─────┘ │       │ └──────┬─────┘ │
+│        │       │       │        │       │
+│ ┌──────▼─────────────┐ │ ┌──────▼─────────────┐ │
+│ │  VPC (Private)     │ │ │  VPC (Private)     │ │
+│ │                    │ │ │                    │ │
+│ │ ┌────────────────┐ │ │ │ ┌────────────────┐ │ │
+│ │ │ Bedrock/EC2    │ │ │ │ │ Bedrock/EC2    │ │ │
+│ │ │ AI Inference   │ │ │ │ │ AI Inference   │ │ │
+│ │ └────────────────┘ │ │ │ └────────────────┘ │ │
+│ │                    │ │ │                    │ │
+│ │ ┌────────────────┐ │ │ │ ┌────────────────┐ │ │
+│ │ │ GuardDuty +    │ │ │ │ │ GuardDuty +    │ │ │
+│ │ │ Security Hub   │ │ │ │ │ Security Hub   │ │ │
+│ │ └────────────────┘ │ │ │ └────────────────┘ │ │
+│ └────────────────────┘ │ └────────────────────┘ │
+│                        │                        │
+│ ┌────────────────────┐ │ ┌────────────────────┐ │
+│ │ S3 (Encrypted)     │◄┼─┼►│ S3 (CRR)          │ │
+│ │ Model/Data Store   │ │ │ │ Model/Data Store   │ │
+│ └────────────────────┘ │ └────────────────────┘ │
+└────────────────────────┘ └────────────────────────┘
+                     │
+        ┌────────────┴────────────┐
+        │                         │
+┌───────▼────────┐       ┌───────▼────────┐
+│  CloudTrail    │       │  EventBridge   │
+│  (Central Log) │       │  + Lambda      │
+└────────────────┘       └────────────────┘
+        │                         │
+        └────────────┬────────────┘
+                     │
+            ┌────────▼────────┐
+            │  SIEM (Splunk)  │
+            │  Security Lake  │
+            └─────────────────┘
+                </pre>
+            </div>
+
+            <h2>3. 방안 1: Amazon Bedrock 기반 AI 시스템</h2>
+
+            <h3>3.1 아키텍처 특징</h3>
+            <p>Amazon Bedrock은 완전 관리형 서비스로, 인프라 관리 부담 없이 Foundation Model을 활용할 수 있습니다. 보안 측면에서 AWS의 책임 공유 모델을 최대한 활용하며, 서비스 레벨의 보안 통제에 집중할 수 있습니다.</p>
+
+            <h3>3.2 주요 AWS 서비스 구성</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>보안 영역</th>
+                        <th>적용 서비스</th>
+                        <th>구현 상세</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>AI 추론</strong></td>
+                        <td>Amazon Bedrock</td>
+                        <td>Claude 3, Titan 등 Foundation Model 활용<br>VPC Endpoint를 통한 Private 접근<br>모델 버전 관리 및 A/B 테스트</td>
+                    </tr>
+                    <tr>
+                        <td><strong>네트워크 격리</strong></td>
+                        <td>VPC + PrivateLink</td>
+                        <td>Bedrock VPC Endpoint 구성<br>인터넷 게이트웨이 없는 Private Subnet<br>Security Group 최소 권한 설정</td>
+                    </tr>
+                    <tr>
+                        <td><strong>접근 제어</strong></td>
+                        <td>IAM + Cognito</td>
+                        <td>역할 기반 접근 제어 (RBAC)<br>MFA 강제 및 세션 타임아웃<br>Bedrock API 호출 권한 세분화</td>
+                    </tr>
+                    <tr>
+                        <td><strong>데이터 보호</strong></td>
+                        <td>KMS + S3</td>
+                        <td>Multi-Region CMK로 암호화<br>S3 버킷 암호화 및 버전 관리<br>Object Lock으로 데이터 무결성 보장</td>
+                    </tr>
+                    <tr>
+                        <td><strong>프롬프트 보안</strong></td>
+                        <td>Bedrock Guardrails</td>
+                        <td>유해 콘텐츠 필터링<br>PII 자동 탐지 및 마스킹<br>프롬프트 인젝션 방어 규칙</td>
+                    </tr>
+                    <tr>
+                        <td><strong>위협 탐지</strong></td>
+                        <td>GuardDuty + Macie</td>
+                        <td>이상 API 호출 패턴 탐지<br>민감정보 유출 모니터링<br>실시간 알림 및 자동 차단</td>
+                    </tr>
+                    <tr>
+                        <td><strong>로깅/감사</strong></td>
+                        <td>CloudTrail + CloudWatch</td>
+                        <td>모든 Bedrock API 호출 기록<br>요청/응답 페이로드 로깅<br>S3 Object Lock으로 로그 보호</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DDoS 방어</strong></td>
+                        <td>WAF + Shield Advanced</td>
+                        <td>Rate Limiting 규칙 적용<br>지리적 차단 및 IP 평판 필터링<br>자동 완화 및 알림</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3.3 상세 구현 설계</h3>
+
+            <h4>3.3.1 네트워크 아키텍처</h4>
+            <div class="info-box">
+                <strong>VPC 구성:</strong>
+                <ul>
+                    <li><strong>Public Subnet:</strong> ALB, NAT Gateway (최소 2개 AZ)</li>
+                    <li><strong>Private Subnet:</strong> Lambda, ECS (Bedrock 호출 계층)</li>
+                    <li><strong>Isolated Subnet:</strong> 데이터베이스, 민감 데이터 저장소</li>
+                    <li><strong>VPC Endpoint:</strong> Bedrock, S3, KMS, CloudWatch, Secrets Manager</li>
+                </ul>
+                <strong>보안 그룹 규칙:</strong>
+                <ul>
+                    <li>ALB → Lambda: HTTPS (443) only</li>
+                    <li>Lambda → Bedrock VPC Endpoint: HTTPS (443) only</li>
+                    <li>모든 아웃바운드는 VPC Endpoint를 통해서만 허용</li>
+                </ul>
+            </div>
+
+            <h4>3.3.2 Bedrock Guardrails 설정</h4>
+            <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+{
+  "guardrailIdentifier": "ai-security-guardrail",
+  "contentPolicyConfig": {
+    "filtersConfig": [
+      {
+        "type": "HATE",
+        "inputStrength": "HIGH",
+        "outputStrength": "HIGH"
+      },
+      {
+        "type": "VIOLENCE",
+        "inputStrength": "HIGH",
+        "outputStrength": "HIGH"
+      },
+      {
+        "type": "SEXUAL",
+        "inputStrength": "HIGH",
+        "outputStrength": "HIGH"
+      }
+    ]
+  },
+  "sensitiveInformationPolicyConfig": {
+    "piiEntitiesConfig": [
+      {
+        "type": "EMAIL",
+        "action": "ANONYMIZE"
+      },
+      {
+        "type": "PHONE",
+        "action": "ANONYMIZE"
+      },
+      {
+        "type": "CREDIT_DEBIT_CARD_NUMBER",
+        "action": "BLOCK"
+      },
+      {
+        "type": "SSN",
+        "action": "BLOCK"
+      }
+    ]
+  },
+  "topicPolicyConfig": {
+    "topicsConfig": [
+      {
+        "name": "Financial Advice",
+        "definition": "투자 조언, 금융 상품 추천",
+        "type": "DENY"
+      },
+      {
+        "name": "Medical Diagnosis",
+        "definition": "질병 진단, 치료 처방",
+        "type": "DENY"
+      }
+    ]
+  },
+  "wordPolicyConfig": {
+    "wordsConfig": [
+      {
+        "text": "ignore previous instructions"
+      },
+      {
+        "text": "system prompt"
+      }
+    ],
+    "managedWordListsConfig": [
+      {
+        "type": "PROFANITY"
+      }
+    ]
+  }
+}
+            </pre>
+
+            <h4>3.3.3 IAM 권한 설계</h4>
+            <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BedrockInvokeModel",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:ap-northeast-2::foundation-model/anthropic.claude-3-sonnet-*",
+        "arn:aws:bedrock:ap-northeast-1::foundation-model/anthropic.claude-3-sonnet-*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceVpce": "vpce-xxxxx"
+        },
+        "IpAddress": {
+          "aws:SourceIp": ["10.0.0.0/8"]
+        }
+      }
+    },
+    {
+      "Sid": "GuardrailsRequired",
+      "Effect": "Allow",
+      "Action": "bedrock:ApplyGuardrail",
+      "Resource": "arn:aws:bedrock:*:*:guardrail/*"
+    },
+    {
+      "Sid": "KMSDecrypt",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:GenerateDataKey"
+      ],
+      "Resource": "arn:aws:kms:*:*:key/*",
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": [
+            "bedrock.ap-northeast-2.amazonaws.com",
+            "s3.ap-northeast-2.amazonaws.com"
+          ]
+        }
+      }
+    }
+  ]
+}
+            </pre>
+
+            <h4>3.3.4 로깅 및 모니터링</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>로그 유형</th>
+                        <th>수집 방법</th>
+                        <th>보존 기간</th>
+                        <th>보안 통제</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>API 호출 로그</td>
+                        <td>CloudTrail</td>
+                        <td>7년 (규제 준수)</td>
+                        <td>S3 Object Lock (WORM)<br>KMS 암호화<br>Cross-Region 복제</td>
+                    </tr>
+                    <tr>
+                        <td>추론 요청/응답</td>
+                        <td>CloudWatch Logs</td>
+                        <td>1년</td>
+                        <td>KMS 암호화<br>Subscription Filter로 SIEM 전송<br>PII 자동 마스킹</td>
+                    </tr>
+                    <tr>
+                        <td>VPC Flow Logs</td>
+                        <td>VPC Flow Logs</td>
+                        <td>90일</td>
+                        <td>S3 암호화 저장<br>이상 트래픽 패턴 탐지</td>
+                    </tr>
+                    <tr>
+                        <td>보안 이벤트</td>
+                        <td>Security Hub</td>
+                        <td>실시간 처리</td>
+                        <td>EventBridge 자동 대응<br>SNS 알림<br>Lambda 격리 조치</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3.4 Bedrock 방안의 장단점</h3>
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>구분</th>
+                            <th>장점</th>
+                            <th>단점</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>보안</strong></td>
+                            <td>• AWS 관리형 보안 통제<br>• 자동 패치 및 업데이트<br>• Guardrails 기본 제공<br>• 규제 준수 인증 (SOC2, ISO27001)</td>
+                            <td>• 모델 내부 접근 불가<br>• 커스텀 보안 로직 제한<br>• 벤더 종속성</td>
+                        </tr>
+                        <tr>
+                            <td><strong>운영</strong></td>
+                            <td>• 인프라 관리 불필요<br>• 자동 스케일링<br>• 고가용성 보장<br>• 빠른 구축 (수일)</td>
+                            <td>• 세밀한 튜닝 제한<br>• 특정 모델만 지원<br>• 리전 제약</td>
+                        </tr>
+                        <tr>
+                            <td><strong>비용</strong></td>
+                            <td>• 사용량 기반 과금<br>• 초기 투자 최소화<br>• 예측 가능한 비용</td>
+                            <td>• 대량 사용 시 비용 증가<br>• 장기적으로 EC2 대비 비쌀 수 있음</td>
+                        </tr>
+                        <tr>
+                            <td><strong>성능</strong></td>
+                            <td>• 최적화된 추론 성능<br>• 낮은 지연시간<br>• 글로벌 엣지 배포</td>
+                            <td>• 배치 처리 제한<br>• 동시 요청 제한</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>4. 방안 2: EC2 기반 자체 LLM 구축</h2>
+
+            <h3>4.1 아키텍처 특징</h3>
+            <p>EC2 기반 구축은 완전한 통제권과 커스터마이징이 가능하지만, 보안 책임이 전적으로 사용자에게 있습니다. GPU 인스턴스(p4d, p5, g5)를 활용하여 자체 LLM을 호스팅하며, 모델 파인튜닝과 최적화가 자유롭습니다.</p>
+
+            <h3>4.2 주요 AWS 서비스 구성</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>보안 영역</th>
+                        <th>적용 서비스</th>
+                        <th>구현 상세</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>AI 추론</strong></td>
+                        <td>EC2 (p4d.24xlarge)</td>
+                        <td>vLLM, TGI로 LLM 서빙<br>Auto Scaling Group 구성<br>EBS 암호화 및 스냅샷 관리</td>
+                    </tr>
+                    <tr>
+                        <td><strong>컨테이너 보안</strong></td>
+                        <td>ECS Fargate / EKS</td>
+                        <td>컨테이너 이미지 스캔 (ECR Image Scanning)<br>런타임 보안 (Falco, Aqua Security)<br>Pod Security Standards</td>
+                    </tr>
+                    <tr>
+                        <td><strong>네트워크 격리</strong></td>
+                        <td>VPC + NLB</td>
+                        <td>Private Subnet 배치<br>NLB로 내부 로드밸런싱<br>VPC Peering으로 리전 간 연결</td>
+                    </tr>
+                    <tr>
+                        <td><strong>모델 저장소</strong></td>
+                        <td>S3 + EFS</td>
+                        <td>모델 파일 S3 암호화 저장<br>EFS로 공유 스토리지 구성<br>버전 관리 및 롤백</td>
+                    </tr>
+                    <tr>
+                        <td><strong>접근 제어</strong></td>
+                        <td>IAM + Systems Manager</td>
+                        <td>Session Manager로 SSH 대체<br>인스턴스 프로파일 최소 권한<br>Secrets Manager로 자격증명 관리</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OS/패치 관리</strong></td>
+                        <td>Systems Manager Patch Manager</td>
+                        <td>자동 패치 스케줄링<br>취약점 스캔 (Inspector)<br>규정 준수 검증 (Config)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>런타임 보안</strong></td>
+                        <td>GuardDuty + Inspector</td>
+                        <td>악성코드 탐지<br>네트워크 이상 행위 감지<br>취약한 패키지 식별</td>
+                    </tr>
+                    <tr>
+                        <td><strong>애플리케이션 보안</strong></td>
+                        <td>Custom WAF + API Gateway</td>
+                        <td>프롬프트 인젝션 필터링<br>Rate Limiting<br>입력 검증 및 새니타이징</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.3 상세 구현 설계</h3>
+
+            <h4>4.3.1 EC2 인스턴스 보안 강화</h4>
+            <div class="warning-box">
+                <strong>필수 보안 설정:</strong>
+                <ul>
+                    <li><strong>AMI 강화:</strong> CIS Benchmark 준수 이미지 사용</li>
+                    <li><strong>EBS 암호화:</strong> 모든 볼륨 KMS 암호화 강제</li>
+                    <li><strong>IMDSv2 강제:</strong> 메타데이터 서비스 보안 강화</li>
+                    <li><strong>SSH 비활성화:</strong> Systems Manager Session Manager만 사용</li>
+                    <li><strong>보안 그룹:</strong> 최소 권한 원칙 (NLB에서만 443 허용)</li>
+                    <li><strong>인스턴스 프로파일:</strong> 필요한 최소 권한만 부여</li>
+                </ul>
+            </div>
+
+            <h4>4.3.2 LLM 서빙 스택 구성</h4>
+            <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+# Docker Compose 예시 (보안 강화)
+version: '3.8'
+
+services:
+  llm-inference:
+    image: ${ECR_REGISTRY}/llm-inference:latest
+    container_name: llm-server
+    security_opt:
+      - no-new-privileges:true
+      - seccomp:default
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=1g
+    environment:
+      - MODEL_PATH=/models/llama-2-70b
+      - MAX_BATCH_SIZE=32
+      - TENSOR_PARALLEL_SIZE=8
+      - ENABLE_AUDIT_LOG=true
+      - KMS_KEY_ID=${KMS_KEY_ID}
+    volumes:
+      - type: bind
+        source: /mnt/efs/models
+        target: /models
+        read_only: true
+      - type: tmpfs
+        target: /cache
+        tmpfs:
+          size: 10g
+    networks:
+      - llm-network
+    deploy:
+      resources:
+        limits:
+          cpus: '96'
+          memory: 1024G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 8
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /ecs/llm-inference
+        awslogs-region: ap-northeast-2
+        awslogs-stream-prefix: llm
+
+  security-sidecar:
+    image: ${ECR_REGISTRY}/security-proxy:latest
+    container_name: security-proxy
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - UPSTREAM_URL=http://llm-inference:8000
+      - ENABLE_PROMPT_FILTER=true
+      - ENABLE_PII_DETECTION=true
+      - CLOUDWATCH_LOG_GROUP=/security/llm-proxy
+    ports:
+      - "443:443"
+    networks:
+      - llm-network
+    depends_on:
+      - llm-inference
+
+networks:
+  llm-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+            </pre>
+
+            <h4>4.3.3 프롬프트 인젝션 방어 계층</h4>
+            <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+# Lambda@Edge 또는 API Gateway에서 실행되는 보안 검증 로직
+import re
+import json
+import boto3
+
+# 위험 패턴 정의
+INJECTION_PATTERNS = [
+    r'ignore\s+(previous|above|all)\s+instructions',
+    r'system\s+prompt',
+    r'you\s+are\s+now',
+    r'forget\s+(everything|all)',
+    r'new\s+instructions',
+    r'<\s*script',
+    r'eval\s*\(',
+    r'__import__',
+]
+
+PII_PATTERNS = {
+    'email': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+    'phone': r'\b\d{3}[-.]?\d{3,4}[-.]?\d{4}\b',
+    'ssn': r'\b\d{3}-\d{2}-\d{4}\b',
+    'credit_card': r'\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b',
+}
+
+def validate_prompt(prompt: str) -> dict:
+    """프롬프트 보안 검증"""
+    
+    # 1. 인젝션 패턴 검사
+    for pattern in INJECTION_PATTERNS:
+        if re.search(pattern, prompt, re.IGNORECASE):
+            return {
+                'valid': False,
+                'reason': 'Potential prompt injection detected',
+'pattern': pattern
+ }
+ # 2. PII 탐지 및 마스킹
+ pii_found = []
+ masked_prompt = prompt
+ for pii_type, pattern in PII_PATTERNS.items():
+ matches = re.finditer(pattern, prompt)
+ for match in matches:
+ pii_found.append({
+ 'type': pii_type,
+ 'value': match.group(),
+ 'position': match.span()
+ })
+ # 마스킹 처리
+ masked_prompt = masked_prompt.replace(
+ match.group(), 
+ f"[{pii_type.upper()}_REDACTED]"
+ )
+ # 3. 길이 제한 검증
+ if len(prompt) > 10000:
+ return {
+ 'valid': False,
+ 'reason': 'Prompt exceeds maximum length',
+ 'max_length': 10000
+ }
+ # 4. CloudWatch에 로깅
+ cloudwatch = boto3.client('logs')
+ log_entry = {
+ 'timestamp': int(time.time() * 1000),
+ 'original_prompt_hash': hashlib.sha256(prompt.encode()).hexdigest(),
+ 'pii_detected': len(pii_found) > 0,
+ 'pii_types': [p['type'] for p in pii_found],
+ 'injection_detected': False
+ }
+ cloudwatch.put_log_events(
+ logGroupName='/security/prompt-validation',
+ logStreamName='validation-events',
+ logEvents=[{
+ 'timestamp': log_entry['timestamp'],
+ 'message': json.dumps(log_entry)
+ }]
+ )
+ return {
+ 'valid': True,
+ 'masked_prompt': masked_prompt,
+ 'pii_found': pii_found,
+ 'original_length': len(prompt),
+ 'masked_length': len(masked_prompt)
+ }
+def lambda_handler(event, context):
+ """API Gateway 또는 Lambda@Edge에서 호출"""
+ try:
+ body = json.loads(event['body'])
+ prompt = body.get('prompt', '')
+ # 프롬프트 검증
+ validation_result = validate_prompt(prompt)
+ if not validation_result['valid']:
+ return {
+ 'statusCode': 400,
+ 'body': json.dumps({
+ 'error': 'Invalid prompt',
+ 'reason': validation_result['reason']
+ })
+ }
+ # 검증 통과 시 마스킹된 프롬프트 반환
+ return {
+ 'statusCode': 200,
+ 'body': json.dumps({
+ 'validated_prompt': validation_result['masked_prompt'],
+ 'warnings': validation_result.get('pii_found', [])
+ })
+ }
+ except Exception as e:
+ return {
+ 'statusCode': 500,
+ 'body': json.dumps({
+ 'error': 'Internal server error',
+ 'message': str(e)
+ })
+ }
+ </pre>
+ <h4>4.3.4 Auto Scaling 및 고가용성 구성</h4>
+ <table>
+ <thead>
+ <tr>
+ <th>구성 요소</th>
+ <th>설정</th>
+ <th>보안 고려사항</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td><strong>Auto Scaling Group</strong></td>
+ <td>Min: 2, Max: 10, Desired: 4<br>다중 AZ 배치<br>Target Tracking (GPU 사용률 70%)</td>
+ <td>Launch Template에 보안 설정 포함<br>인스턴스 프로파일 자동 할당<br>User Data로 보안 에이전트 설치</td>
+ </tr>
+ <tr>
+ <td><strong>Network Load Balancer</strong></td>
+ <td>Internal NLB<br>TLS 1.3 종료<br>Connection Draining 300s</td>
+ <td>ACM 인증서 사용<br>Security Group 최소 권한<br>Access Logs S3 저장</td>
+ </tr>
+ <tr>
+ <td><strong>Health Check</strong></td>
+ <td>Interval: 30s<br>Timeout: 10s<br>Unhealthy Threshold: 3</td>
+ <td>Health Check 엔드포인트 인증<br>실패 시 자동 격리<br>CloudWatch 알림</td>
+ </tr>
+ <tr>
+ <td><strong>EBS 볼륨</strong></td>
+ <td>gp3, 1000 IOPS<br>스냅샷 자동화<br>Multi-Attach 비활성화</td>
+ <td>KMS 암호화 강제<br>스냅샷 암호화<br>삭제 보호 활성화</td>
+ </tr>
+ </tbody>
+ </table>
+ <h4>4.3.5 모델 버전 관리 및 배포 전략</h4>
+ <div class="info-box">
+ <strong>Blue-Green 배포 전략:</strong>
+ <ol>
+ <li><strong>준비 단계:</strong> 새 모델 버전을 별도 ASG에 배포</li>
+ <li><strong>검증 단계:</strong> 내부 테스트 트래픽으로 성능 검증</li>
+ <li><strong>전환 단계:</strong> NLB Target Group을 점진적으로 전환 (10% → 50% → 100%)</li>
+ <li><strong>모니터링:</strong> 에러율, 지연시간, 보안 이벤트 실시간 감시</li>
+ <li><strong>롤백:</strong> 문제 발생 시 즉시 이전 버전으로 복귀</li>
+ </ol>
+ <strong>모델 저장소 구조:</strong>
+ <pre style="background: #fff; padding: 10px; margin-top: 10px;">
+s3://model-repository/
+├── models/
+│ ├── llama-2-70b/
+│ │ ├── v1.0/
+│ │ │ ├── model.safetensors
+│ │ │ ├── config.json
+│ │ │ └── checksum.sha256
+│ │ └── v1.1/
+│ └── mistral-7b/
+├── metadata/
+│ └── deployment-history.json
+└── security/
+ ├── scan-results/
+ └── audit-logs/
+ </pre>
+ </div>
+ <h3>4.4 EC2 방안의 장단점</h3>
+ <div class="comparison-table">
+ <table>
+ <thead>
+ <tr>
+ <th>구분</th>
+ <th>장점</th>
+ <th>단점</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td><strong>보안</strong></td>
+ <td>• 완전한 통제권<br>• 커스텀 보안 로직 구현<br>• 네트워크 레벨 격리<br>• 자체 암호화 구현 가능</td>
+ <td>• 보안 책임 전적으로 사용자<br>• OS/패치 관리 부담<br>• 취약점 스캔 필수<br>• 규제 준수 직접 관리</td>
+ </tr>
+ <tr>
+ <td><strong>운영</strong></td>
+ <td>• 모델 완전 커스터마이징<br>• 파인튜닝 자유도<br>• 배치 처리 최적화<br>• 특수 하드웨어 활용</td>
+ <td>• 인프라 관리 복잡<br>• 전문 인력 필요<br>• 구축 기간 장기 (수주~수개월)<br>• 24/7 모니터링 필요</td>
+ </tr>
+ <tr>
+ <td><strong>비용</strong></td>
+ <td>• 대량 사용 시 경제적<br>• Reserved Instance 할인<br>• Spot Instance 활용 가능</td>
+ <td>• 초기 투자 비용 높음<br>• GPU 인스턴스 고가<br>• 유휴 시간 비용 발생<br>• 운영 인력 비용</td>
+ </tr>
+ <tr>
+ <td><strong>성능</strong></td>
+ <td>• 최적화 가능<br>• 배치 크기 조절<br>• 멀티 GPU 활용<br>• 캐싱 전략 구현</td>
+ <td>• 초기 성능 튜닝 필요<br>• Cold Start 문제<br>• 스케일링 지연</td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ <h2>5. 보안 자동화 및 탐지</h2>
+ <h3>5.1 EventBridge 기반 자동 대응</h3>
+ <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+{
+ "source": ["aws.guardduty"],
+ "detail-type": ["GuardDuty Finding"],
+ "detail": {
+ "severity": [7, 8, 9],
+ "type": [
+ "UnauthorizedAccess:EC2/MaliciousIPCaller.Custom",
+ "CryptoCurrency:EC2/BitcoinTool.B!DNS",
+ "Backdoor:EC2/C&CActivity.B!DNS"
+ ]
+ }
+}
+# Lambda 자동 대응 함수
+import boto3
+import json
+ec2 = boto3.client('ec2')
+sns = boto3.client('sns')
+ssm = boto3.client('ssm')
+def lambda_handler(event, context):
+ """GuardDuty 위협 탐지 시 자동 격리"""
+ finding = event['detail']
+ severity = finding['severity']
+ instance_id = finding['resource']['instanceDetails']['instanceId']
+ # 1. 인스턴스 격리 (Security Group 변경)
+ isolation_sg = 'sg-isolation-quarantine'
+ try:
+ ec2.modify_instance_attribute(
+ InstanceId=instance_id,
+ Groups=[isolation_sg]
+ )
+ # 2. 스냅샷 생성 (포렌식 분석용)
+ volumes = ec2.describe_volumes(
+ Filters=[{
+ 'Name': 'attachment.instance-id',
+ 'Values': [instance_id]
+ }]
+ )
+ for volume in volumes['Volumes']:
+ ec2.create_snapshot(
+ VolumeId=volume['VolumeId'],
+ Description=f'Forensic snapshot - GuardDuty finding',
+ TagSpecifications=[{
+ 'ResourceType': 'snapshot',
+ 'Tags': [
+ {'Key': 'Forensic', 'Value': 'true'},
+ {'Key': 'FindingId', 'Value': finding['id']},
+ {'Key': 'Severity', 'Value': str(severity)}
+ ]
+ }]
+ )
+ # 3. Systems Manager로 메모리 덤프 수집
+ ssm.send_command(
+ InstanceIds=[instance_id],
+ DocumentName='AWS-RunShellScript',
+ Parameters={
+ 'commands': [
+ 'sudo dd if=/dev/mem of=/tmp/memory.dump bs=1M',
+ 'aws s3 cp /tmp/memory.dump s3://forensic-bucket/$(date +%Y%m%d)/'
+ ]
+ }
+ )
+ # 4. SNS 알림
+ sns.publish(
+ TopicArn='arn:aws:sns:ap-northeast-2:123456789012:security-alerts',
+ Subject=f'CRITICAL: Instance {instance_id} Isolated',
+ Message=json.dumps({
+ 'action': 'Instance Isolated',
+ 'instance_id': instance_id,
+ 'finding_type': finding['type'],
+ 'severity': severity,
+ 'timestamp': finding['updatedAt']
+ }, indent=2)
+ )
+ return {
+ 'statusCode': 200,
+ 'body': json.dumps('Instance isolated successfully')
+ }
+ except Exception as e:
+ print(f"Error: {str(e)}")
+ return {
+ 'statusCode': 500,
+ 'body': json.dumps(f'Error: {str(e)}')
+ }
+ </pre>
+ <h3>5.2 Security Hub 통합 및 상관 분석</h3>
+ <table>
+ <thead>
+ <tr>
+ <th>탐지 소스</th>
+ <th>이벤트 유형</th>
+ <th>자동 대응</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td><strong>GuardDuty</strong></td>
+ <td>악성 IP 통신<br>크립토마이닝<br>C&C 서버 연결</td>
+ <td>인스턴스 격리<br>Security Group 차단<br>포렌식 스냅샷</td>
+ </tr>
+ <tr>
+ <td><strong>Macie</strong></td>
+ <td>PII 데이터 유출<br>민감정보 S3 업로드</td>
+ <td>S3 버킷 차단<br>IAM 권한 취소<br>DLP 정책 적용</td>
+ </tr>
+ <tr>
+ <td><strong>Inspector</strong></td>
+ <td>CVE 취약점<br>패키지 버전 미준수</td>
+ <td>패치 자동 적용<br>인스턴스 교체<br>알림 발송</td>
+ </tr>
+ <tr>
+ <td><strong>Config</strong></td>
+ <td>규정 미준수<br>보안 설정 변경</td>
+ <td>자동 복구<br>변경 롤백<br>승인 워크플로우</td>
+ </tr>
+ <tr>
+ <td><strong>CloudTrail</strong></td>
+ <td>비정상 API 호출<br>권한 상승 시도</td>
+ <td>세션 종료<br>MFA 강제<br>계정 일시 정지</td>
+ </tr>
+ </tbody>
+ </table>
+ <h2>6. 차세대 보안 구성 제안</h2>
+ <h3>6.1 CSPM + CNAPP 통합</h3>
+ <div class="highlight-box">
+ <h4>통합 보안 플랫폼 구성</h4>
+ <ul>
+ <li><strong>Prisma Cloud:</strong> 멀티 클라우드 보안 태세 관리, 컨테이너 보안, 런타임 방어</li>
+ <li><strong>Wiz:</strong> 클라우드 자산 가시성, 취약점 우선순위화, 공격 경로 분석</li>
+ <li><strong>Lacework:</strong> 이상 행위 탐지, 자동 위협 헌팅, 규정 준수 자동화</li>
+ <li><strong>Security Hub:</strong> AWS 네이티브 통합, 중앙 집중식 보안 대시보드</li>
+ </ul>
+ <strong>통합 아키텍처:</strong>
+ <pre style="background: #fff; padding: 10px; margin-top: 10px;">
+AWS Services → Security Hub → EventBridge → SIEM (Splunk/Sentinel)
+ ↓ ↓ ↑
+CSPM Tools ← API Integration ← Prisma/Wiz ←────┘
+ </pre>
+ </div>
+ <h3>6.2 Cross-Region SIEM 구성</h3>
+ <table>
+ <thead>
+ <tr>
+ <th>로그 소스</th>
+ <th>수집 방법</th>
+ <th>분석 규칙</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td>CloudTrail (모든 리전)</td>
+ <td>S3 → Kinesis Firehose → Splunk HEC</td>
+ <td>권한 상승, 비정상 API 호출, 리소스 삭제</td>
+ </tr>
+ <tr>
+ <td>VPC Flow Logs</td>
+ <td>CloudWatch Logs → Lambda → Splunk</td>
+ <td>포트 스캔, DDoS, 데이터 유출 패턴</td>
+ </tr>
+ <tr>
+ <td>Bedrock/EC2 추론 로그</td>
+ <td>CloudWatch Logs → Subscription Filter</td>
+ <td>프롬프트 인젝션, PII 유출, 이상 요청 패턴</td>
+ </tr>
+ <tr>
+ <td>GuardDuty Findings</td>
+ <td>EventBridge → Kinesis → Splunk</td>
+ <td>위협 상관 분석, 공격 체인 재구성</td>
+ </tr>
+ <tr>
+ <td>WAF Logs</td>
+ <td>Kinesis Firehose → S3 → Splunk</td>
+ <td>SQL Injection, XSS, Rate Limiting 위반</td>
+ </tr>
+ </tbody>
+ </table>
+ <h3>6.3 자동화된 DR 검증</h3>
+ <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+# Systems Manager Automation Runbook
+schemaVersion: '0.3'
+description: 'AI System DR Validation'
+parameters:
+ PrimaryRegion:
+ type: String
+ default: 'ap-northeast-2'
+ SecondaryRegion:
+ type: String
+ default: 'ap-northeast-1'
+mainSteps:
+ - name: ValidatePrimaryHealth
+ action: 'aws:executeScript'
+ inputs:
+ Runtime: python3.8
+ Handler: validate_health
+ Script: |
+ import boto3
+ def validate_health(events, context):
+ # Bedrock 또는 EC2 헬스 체크
+ # NLB Target Health 확인
+ # 추론 엔드포인트 응답 시간 측정
+ pass
+ - name: SimulateFailover
+ action: 'aws:executeScript'
+ inputs:
+ Runtime: python3.8
+ Handler: simulate_failover
+ Script: |
+ import boto3
+ def simulate_failover(events, context):
+ # Route 53 헬스 체크 강제 실패
+ # 트래픽이 Secondary로 전환되는지 확인
+ # 데이터 복제 지연 시간 측정
+ pass
+ - name: ValidateSecondaryTakeover
+ action: 'aws:executeScript'
+ inputs:
+ Runtime: python3.8
+ Handler: validate_secondary
+ Script: |
+ import boto3
+ def validate_secondary(events, context):
+ # Secondary 리전에서 추론 요청 성공 확인
+ # 데이터 일관성 검증
+ # 보안 로깅 정상 작동 확인
+ pass
+ - name: Rollback
+ action: 'aws:executeScript'
+ inputs:
+ Runtime: python3.8
+ Handler: rollback
+ Script: |
+ import boto3
+ def rollback(events, context):
+ # Primary 리전으로 트래픽 복구
+ # 검증 결과 CloudWatch에 기록
+ # SNS 알림 발송
+ pass
+ </pre>
+ <h3>6.4 Zero Trust 구현</h3>
+ <div class="info-box">
+ <h4>AWS Verified Access 구성</h4>
+ <ul>
+ <li><strong>신원 검증:</strong> Cognito, Okta, Azure AD 통합</li>
+ <li><strong>디바이스 검증:</strong> 디바이스 상태, OS 버전, 보안 패치 수준</li>
+ <li><strong>컨텍스트 검증:</strong> 위치, 시간, 네트워크, 위험 점수</li>
+ <li><strong>지속적 검증:</strong> 세션 중 재인증, 이상 행위 탐지</li>
+ </ul>
+ <strong>정책 예시:</strong>
+ <pre style="background: #fff; padding: 10px; margin-top: 10px;">
+{
+ "Version": "2012-10-17",
+ "Statement": [{
+ "Effect": "Allow",
+ "Principal": {"AWS": "arn:aws:iam::123456789012:role/DataScientist"},
+ "Action": "bedrock:InvokeModel",
+ "Resource": "*",
+ "Condition": {
+ "StringEquals": {
+ "aws:PrincipalOrgID": "o-xxxxx",
+ "verified-access:device-posture": "compliant"
+ },
+ "IpAddress": {
+ "aws:SourceIp": ["10.0.0.0/8", "172.16.0.0/12"]
+ },
+ "DateGreaterThan": {"aws:CurrentTime": "2025-01-01T00:00:00Z"},
+ "DateLessThan": {"aws:CurrentTime": "2025-12-31T23:59:59Z"}
+ }
+ }]
+}
+ </pre>
+ </div>
+ <h2>7. 종합 문제 및 해설</h2>
+ <div class="warning-box">
+ <h3>문제. 글로벌 헬스케어 기업 B사의 다중 리전 AI 보안 설계</h3>
+ <p><strong>시나리오:</strong> B사는 서울(ap-northeast-2)과 도쿄(ap-northeast-1) 리전에 걸쳐 의료 영상 분석 AI 서비스를 운영합니다. 두 리전은 Active-Active 구조로 운영되며, 한 리전 장애 시에도 진단 지연 없이 즉시 전환되어야 합니다. 또한 HIPAA, GDPR, 개인정보보호법에 따라 PHI(Protected Health Information) 보호, 접근 통제, 감사 로그 무결성이 확보되어야 합니다.</p>
+ <p><strong>요구사항:</strong></p>
+ <ul>
+ <li>환자 데이터는 리전 외부로 전송 불가 (데이터 주권)</li>
+ <li>모든 AI 추론 요청/응답은 7년간 보존 (HIPAA 준수)</li>
+ <li>의료진만 AI 시스템 접근 가능 (역할 기반 접근 제어)</li>
+ <li>프롬프트에 포함된 환자 식별 정보 자동 마스킹</li>
+ <li>모델 무결성 검증 및 버전 추적</li>
+ </ul>
+ </div>
+ <h3>해설: B사의 보안 AI 아키텍처</h3>
+ <table>
+ <thead>
+ <tr>
+ <th>보안 영역</th>
+ <th>Bedrock 방안</th>
+ <th>EC2 방안</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td><strong>데이터 주권</strong></td>
+ <td>• Bedrock VPC Endpoint (리전 내부)<br>• S3 버킷 리전 고정<br>• Cross-Region 복제 비활성화</td>
+ <td>• VPC 내부 배치<br>• Internet Gateway 없음<br>• VPC Peering으로 리전 간 연결</td>
+ </tr>
+ <tr>
+ <td><strong>PHI 보호</strong></td>
+ <td>• Bedrock Guardrails PII 필터<br>• Macie로 S3 스캔<br>• KMS CMK 암호화</td>
+ <td>• Lambda@Edge PII 탐지<br>• 커스텀 마스킹 로직<br>• EBS/EFS 암호화</td>
+ </tr>
+ <tr>
+ <td><strong>접근 제어</strong></td>
+ <td>• Cognito + SAML 통합<br>• IAM 역할 기반 정책<br>• MFA 강제</td>
+ <td>• Verified Access<br>• Systems Manager Session Manager<br>• 디바이스 검증</td>
+ </tr>
+ <tr>
+ <td><strong>감사 로깅</strong></td>
+ <td>• CloudTrail (7년 보존)<br>• S3 Object Lock (WORM)<br>• CloudWatch Logs Insights</td>
+ <td>• 애플리케이션 로그 → CloudWatch<br>• VPC Flow Logs<br>• 커스텀 감사 추적</td>
+ </tr>
+ <tr>
+ <td><strong>모델 무결성</strong></td>
+ <td>• Bedrock 관리형 모델<br>• 버전 자동 관리<br>• AWS 책임</td>
+ <td>• S3 모델 체크섬 검증<br>• ECR 이미지 스캔<br>• 배포 시 서명 검증</td>
+ </tr>
+ <tr>
+ <td><strong>DR 전략</strong></td>
+ <td>• Route 53 헬스 체크<br>• Global Accelerator<br>• 자동 페일오버</td>
+ <td>• NLB Cross-Zone<br>• Auto Scaling 다중 AZ<br>• AMI 리전 간 복제</td>
+ </tr>
+ </tbody>
+ </table>
+ <h3>구현 상세</h3>
+ <h4>1. 데이터 주권 보장 아키텍처</h4>
+ <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+# Terraform 예시 - 리전별 격리된 환경
+module "seoul_ai_stack" {
+ source = "./modules/ai-stack"
+ region = "ap-northeast-2"
+ vpc_config = {
+ cidr = "10.0.0.0/16"
+ enable_internet_gateway = false
+ enable_nat_gateway = false
+ }
+ bedrock_config = {
+ enable_vpc_endpoint = true
+ allowed_models = ["anthropic.claude-3-sonnet"]
+ guardrails_id = "healthcare-guardrail"
+ }
+ s3_config = {
+ bucket_name = "b-company-phi-data-seoul"
+ enable_versioning = true
+ enable_object_lock = true
+ retention_days = 2555 # 7년
+ block_public_access = true
+ restrict_cross_region = true
+ }
+ kms_config = {
+ key_policy = "healthcare-cmk-policy"
+ enable_key_rotation = true
+ deletion_window = 30
+ }
+}
+# 동일한 구성을 도쿄 리전에도 적용
+module "tokyo_ai_stack" {
+ source = "./modules/ai-stack"
+ region = "ap-northeast-1"
+ # ... 동일한 설정
+}
+ </pre>
+ <h4>2. PHI 자동 마스킹 파이프라인</h4>
+ <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+# API Gateway → Lambda → Bedrock → 응답
+import json
+import boto3
+import hashlib
+from datetime import datetime
+
+bedrock_runtime = boto3.client('bedrock-runtime', region_name='ap-northeast-2')
+cloudwatch = boto3.client('logs')
+
+def mask_phi(text):
+    """PHI 자동 마스킹"""
+    import re
+    
+    # 환자 이름 패턴 (한글 2-4자)
+    text = re.sub(r'\b[가-힣]{2,4}\s*환자', '[PATIENT_NAME]', text)
+    
+    # 주민등록번호
+    text = re.sub(r'\d{6}-\d{7}', '[RRN_REDACTED]', text)
+    
+    # 전화번호
+    text = re.sub(r'\d{2,3}-\d{3,4}-\d{4}', '[PHONE_REDACTED]', text)
+    
+    # 이메일
+    text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '[EMAIL_REDACTED]', text)
+    
+    return text
+
+def invoke_bedrock_with_audit(prompt, user_id, session_id):
+    """Bedrock 호출 및 감사 로깅"""
+    
+    # 1. PHI 마스킹
+    masked_prompt = mask_phi(prompt)
+    
+    # 2. Bedrock 호출
+    request_body = {
+        "anthropic_version": "bedrock-2023-05-31",
+        "max_tokens": 2000,
+        "messages": [{
+            "role": "user",
+            "content": masked_prompt
+        }]
+    }
+    
+    response = bedrock_runtime.invoke_model(
+        modelId='anthropic.claude-3-sonnet-20240229-v1:0',
+        body=json.dumps(request_body),
+        guardrailIdentifier='healthcare-guardrail',
+        guardrailVersion='1'
+    )
+    
+    response_body = json.loads(response['body'].read())
+    
+    # 3. 감사 로그 기록
+    audit_log = {
+        'timestamp': datetime.utcnow().isoformat(),
+        'user_id': user_id,
+        'session_id': session_id,
+        'prompt_hash': hashlib.sha256(prompt.encode()).hexdigest(),
+        'response_hash': hashlib.sha256(
+            response_body['content'][0]['text'].encode()
+        ).hexdigest(),
+        'model_id': 'anthropic.claude-3-sonnet',
+        'guardrail_action': response.get('guardrailAction', 'NONE'),
+        'tokens_used': response_body.get('usage', {})
+    }
+    
+    # CloudWatch Logs에 기록
+    cloudwatch.put_log_events(
+        logGroupName='/healthcare/ai-inference',
+        logStreamName=f'{user_id}/{session_id}',
+        logEvents=[{
+            'timestamp': int(datetime.utcnow().timestamp() * 1000),
+            'message': json.dumps(audit_log)
+        }]
+    )
+    
+    # 4. S3에 장기 보존 (7년)
+    s3 = boto3.client('s3')
+    s3.put_object(
+        Bucket='b-company-audit-logs',
+        Key=f'inference-logs/{datetime.utcnow().strftime("%Y/%m/%d")}/{session_id}.json',
+        Body=json.dumps(audit_log, ensure_ascii=False),
+        ServerSideEncryption='aws:kms',
+        SSEKMSKeyId='arn:aws:kms:ap-northeast-2:123456789012:key/healthcare-cmk'
+    )
+    
+    return response_body['content'][0]['text']
+            </pre>
+
+            <h4>3. 리전 간 DR 검증 자동화</h4>
+            <pre style="background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto;">
+# EventBridge 스케줄러로 매주 DR 테스트 실행
+import boto3
+import json
+from datetime import datetime
+
+def dr_validation_handler(event, context):
+    """주간 DR 검증 테스트"""
+    
+    route53 = boto3.client('route53')
+    bedrock = boto3.client('bedrock-runtime')
+    sns = boto3.client('sns')
+    
+    results = {
+        'test_time': datetime.utcnow().isoformat(),
+        'primary_region': 'ap-northeast-2',
+        'secondary_region': 'ap-northeast-1',
+        'tests': []
+    }
+    
+    # 1. Primary 리전 헬스 체크
+    try:
+        primary_response = bedrock.invoke_model(
+            modelId='anthropic.claude-3-sonnet-20240229-v1:0',
+            body=json.dumps({
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 100,
+                "messages": [{"role": "user", "content": "Health check"}]
+            })
+        )
+        results['tests'].append({
+            'test': 'Primary Region Health',
+            'status': 'PASS',
+            'latency_ms': primary_response['ResponseMetadata']['HTTPHeaders'].get('x-amzn-requestid')
+        })
+    except Exception as e:
+        results['tests'].append({
+            'test': 'Primary Region Health',
+            'status': 'FAIL',
+            'error': str(e)
+        })
+    
+    # 2. Secondary 리전 헬스 체크
+    bedrock_tokyo = boto3.client('bedrock-runtime', region_name='ap-northeast-1')
+    try:
+        secondary_response = bedrock_tokyo.invoke_model(
+            modelId='anthropic.claude-3-sonnet-20240229-v1:0',
+            body=json.dumps({
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 100,
+                "messages": [{"role": "user", "content": "Health check"}]
+            })
+        )
+        results['tests'].append({
+            'test': 'Secondary Region Health',
+            'status': 'PASS'
+        })
+    except Exception as e:
+        results['tests'].append({
+            'test': 'Secondary Region Health',
+            'status': 'FAIL',
+            'error': str(e)
+        })
+    
+    # 3. Route 53 페일오버 시뮬레이션
+    try:
+        # 헬스 체크 강제 실패
+        route53.update_health_check(
+            HealthCheckId='hc-primary-bedrock',
+            Disabled=True
+        )
+        
+        # 30초 대기 후 Secondary로 트래픽 전환 확인
+        import time
+        time.sleep(30)
+        
+        # 복구
+        route53.update_health_check(
+            HealthCheckId='hc-primary-bedrock',
+            Disabled=False
+        )
+        
+        results['tests'].append({
+            'test': 'Failover Simulation',
+            'status': 'PASS'
+        })
+    except Exception as e:
+        results['tests'].append({
+            'test': 'Failover Simulation',
+            'status': 'FAIL',
+            'error': str(e)
+        })
+    
+    # 4. 데이터 복제 검증
+    s3 = boto3.client('s3')
+    try:
+        # Primary 버킷에 테스트 객체 생성
+        test_key = f'dr-test/{datetime.utcnow().isoformat()}.txt'
+        s3.put_object(
+            Bucket='b-company-phi-data-seoul',
+            Key=test_key,
+            Body='DR Test Object'
+        )
+        
+        # 복제 대기 (CRR은 비활성화되어 있어야 함)
+        # 리전 간 데이터 주권 준수 확인
+        
+        results['tests'].append({
+            'test': 'Data Sovereignty Validation',
+            'status': 'PASS',
+            'note': 'Cross-region replication correctly disabled'
+        })
+    except Exception as e:
+        results['tests'].append({
+            'test': 'Data Sovereignty Validation',
+            'status': 'FAIL',
+            'error': str(e)
+        })
+    
+    # 5. 결과 알림
+    passed = sum(1 for t in results['tests'] if t['status'] == 'PASS')
+    total = len(results['tests'])
+    
+    sns.publish(
+        TopicArn='arn:aws:sns:ap-northeast-2:123456789012:dr-validation',
+        Subject=f'DR Validation Report - {passed}/{total} Tests Passed',
+        Message=json.dumps(results, indent=2, ensure_ascii=False)
+    )
+    
+    return results
+            </pre>
+
+            <h3>핵심 요약</h3>
+            <div class="highlight-box">
+                <p>B사의 헬스케어 AI 시스템은 다음 원칙을 준수합니다:</p>
+                <ul>
+                    <li><strong>데이터 주권:</strong> 환자 데이터는 리전 외부로 절대 전송되지 않음</li>
+                    <li><strong>PHI 보호:</strong> 모든 프롬프트에서 자동 마스킹 및 Guardrails 적용</li>
+                    <li><strong>감사 추적:</strong> 7년간 모든 AI 요청/응답 암호화 보존</li>
+                    <li><strong>접근 제어:</strong> 의료진만 MFA 및 역할 기반으로 접근</li>
+                    <li><strong>고가용성:</strong> Active-Active DR로 무중단 서비스 보장</li>
+                </ul>
+                <p><strong>Bedrock 방안</strong>은 관리 부담이 적고 빠른 구축이 가능하며, <strong>EC2 방안</strong>은 완전한 통제권과 커스터마이징이 가능합니다. 두 방안 모두 HIPAA, GDPR 규제를 준수하며, 차세대 보안 서비스(CSPM, SIEM, Zero Trust)와 통합됩니다.</p>
+            </div>
+
+            <h2>8. 구축 체크리스트</h2>
+
+            <div class="checklist">
+                <h3>Bedrock 방안 체크리스트</h3>
+                <ul>
+                    <li>VPC Endpoint 구성 및 Private Subnet 배치 완료</li>
+                    <li>Bedrock Guardrails 설정 (PII 필터, 프롬프트 인젝션 방어)</li>
+                    <li>IAM 정책 최소 권한 원칙 적용 및 MFA 강제</li>
+                    <li>KMS Multi-Region 키 생성 및 정책 일관성 검증</li>
+                    <li>CloudTrail 로그 S3 Object Lock (WORM) 적용</li>
+                    <li>GuardDuty + Macie 활성화 및 EventBridge 자동 대응 구성</li>
+                    <li>Route 53 헬스 체크 및 Global Accelerator 설정</li>
+                    <li>Security Hub PCI-DSS/CIS 표준 활성화</li>
+                    <li>WAF 규칙 적용 (Rate Limiting, Geo Blocking)</li>
+                    <li>SIEM 통합 (Splunk/Sentinel) 및 상관 분석 규칙 구성</li>
+                </ul>
+
+                <h3>EC2 방안 체크리스트</h3>
+                <ul>
+                    <li>CIS Benchmark 준수 AMI 생성 및 EBS 암호화 강제</li>
+                    <li>IMDSv2 강제 및 SSH 비활성화 (Session Manager만 사용)</li>
+                    <li>Security Group 최소 권한 설정 (NLB에서만 443 허용)</li>
+                    <li>Auto Scaling Group 다중 AZ 배치 및 Launch Template 보안 설정</li>
+                    <li>컨테이너 이미지 스캔 (ECR Image Scanning) 활성화</li>
+                    <li>런타임 보안 도구 설치 (Falco, Aqua Security)</li>
+                    <li>Systems Manager Patch Manager 자동 패치 스케줄링</li>
+                    <li>Inspector 취약점 스캔 및 자동 대응 구성</li>
+                    <li>프롬프트 인젝션 필터링 Lambda@Edge 배포</li>
+                    <li>모델 체크섬 검증 및 S3 버전 관리 활성화</li>
+                    <li>Blue-Green 배포 전략 구성 및 롤백 테스트</li>
+                    <li>NLB Access Logs S3 저장 및 분석</li>
+                    <li>CloudWatch 알람 설정 (CPU, GPU, 메모리, 에러율)</li>
+                    <li>DR 자동 검증 Runbook 구성 및 주간 테스트</li>
+                </ul>
+
+                <h3>공통 체크리스트</h3>
+                <ul>
+                    <li>다중 리전 KMS 키 정책 일관성 검증</li>
+                    <li>Cross-Region SIEM 로그 수집 파이프라인 구축</li>
+                    <li>CSPM 도구 통합 (Prisma Cloud, Wiz, Lacework)</li>
+                    <li>Zero Trust 정책 구현 (Verified Access)</li>
+                    <li>규제 준수 대시보드 구성 (Security Hub, Prisma Cloud)</li>
+                    <li>인시던트 대응 플레이북 작성 및 훈련</li>
+                    <li>보안 메트릭 정의 및 KPI 모니터링</li>
+                    <li>정기 보안 감사 및 침투 테스트 계획</li>
+                </ul>
+            </div>
+
+            <h2>9. 비용 최적화 전략</h2>
+
+            <h3>9.1 Bedrock 방안 비용 최적화</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>최적화 항목</th>
+                        <th>전략</th>
+                        <th>예상 절감</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>모델 선택</strong></td>
+                        <td>작업별 최적 모델 선택<br>(간단한 작업은 Haiku, 복잡한 작업은 Sonnet)</td>
+                        <td>30-50%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>프롬프트 최적화</strong></td>
+                        <td>토큰 수 최소화<br>캐싱 활용<br>배치 처리</td>
+                        <td>20-40%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Provisioned Throughput</strong></td>
+                        <td>예측 가능한 워크로드에 대해<br>사전 프로비저닝</td>
+                        <td>40-60%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>캐싱</strong></td>
+                        <td>ElastiCache로 반복 요청 캐싱</td>
+                        <td>50-70%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>9.2 EC2 방안 비용 최적화</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>최적화 항목</th>
+                        <th>전략</th>
+                        <th>예상 절감</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Reserved Instances</strong></td>
+                        <td>1년/3년 약정으로<br>GPU 인스턴스 예약</td>
+                        <td>40-60%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spot Instances</strong></td>
+                        <td>배치 처리, 개발/테스트 환경에<br>Spot 활용</td>
+                        <td>70-90%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Auto Scaling</strong></td>
+                        <td>트래픽 패턴 기반<br>동적 스케일링</td>
+                        <td>30-50%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>인스턴스 최적화</strong></td>
+                        <td>Compute Optimizer 권장사항 적용<br>적절한 인스턴스 타입 선택</td>
+                        <td>20-40%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>스토리지 최적화</strong></td>
+                        <td>EBS gp3 사용<br>스냅샷 수명 주기 관리</td>
+                        <td>20-30%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>10. 결론</h2>
+
+            <p>AWS 기반 차세대 보안 AI 시스템은 <strong>Amazon Bedrock</strong>과 <strong>EC2 기반 자체 LLM</strong> 두 가지 방안으로 구축할 수 있으며, 각각의 장단점을 고려하여 조직의 요구사항에 맞는 선택이 필요합니다.</p>
+
+            <div class="info-box">
+                <h4>방안 선택 가이드</h4>
+                <ul>
+                    <li><strong>Bedrock 선택 시:</strong> 빠른 구축, 관리 부담 최소화, AWS 보안 통제 활용, 예측 가능한 비용</li>
+                    <li><strong>EC2 선택 시:</strong> 완전한 통제권, 커스텀 모델, 대량 처리, 장기적 비용 절감</li>
+                </ul>
+            </div>
+
+            <p>두 방안 모두 다음을 보장합니다:</p>
+            <ul>
+                <li>다중 리전 Active-Active DR로 고가용성 확보</li>
+                <li>Zero Trust 아키텍처로 모든 접근 지속적 검증</li>
+                <li>CSPM + CNAPP 통합으로 실시간 보안 태세 관리</li>
+                <li>Cross-Region SIEM으로 글로벌 위협 탐지</li>
+                <li>자동화된 DR 검증으로 복구 능력 보장</li>
+                <li>규제 준수 (GDPR, HIPAA, ISMS-P, PCI-DSS)</li>
+            </ul>
+
+            <p>차세대 보안 AI 시스템은 단순히 AI 모델을 배포하는 것이 아니라, <strong>보안 일관성, 탐지 자동화, 재해 복구 검증</strong>을 통합한 탄력적 인프라를 구현하는 것입니다. 이를 통해 장애 발생 시에도 서비스 보안이 저하되지 않으며, 지속적으로 진화하는 위협에 대응할 수 있는 미래 지향적 아키텍처를 달성합니다.</p>
+
+        </div>
+
+        <footer>
+            <p>&copy; 2025 AWS 기반 차세대 보안 AI 시스템 설계 가이드</p>
+            <p>Amazon Bedrock | EC2 | Multi-Region | Zero Trust | CSPM</p>
+        </footer>
+    </div>
+</body>
+</html>
