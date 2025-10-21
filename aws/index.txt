@@ -1,0 +1,326 @@
+User: test
+Model: Hello! I'm working and ready to help you. What would you like to test or discuss?
+User: AWS 차세대 보안 아키텍쳐 설계 가이드
+Model: # AWS 차세대 보안 아키텍쳐 설계 가이드
+
+AWS 클라우드 환경에서 현대적이고 강력한 보안 아키텍쳐를 구축하기 위한 포괄적인 가이드를 제공합니다.
+
+## 1. 핵심 보안 원칙
+
+### Zero Trust 아키텍쳐
+- **원칙**: "절대 신뢰하지 말고, 항상 검증하라"
+- 네트워크 위치와 관계없이 모든 접근 요청 검증
+- 최소 권한 원칙(Least Privilege) 적용
+
+### Defense in Depth (다층 방어)
+- 여러 보안 계층 구축
+- 단일 실패 지점 제거
+- 각 계층별 독립적인 보안 통제
+
+## 2. 계정 및 조직 보안
+
+### AWS Organizations 구조
+```
+Root OU
+├── Security OU
+│   ├── Log Archive Account
+│   └── Security Tooling Account
+├── Infrastructure OU
+│   ├── Network Account
+│   └── Shared Services Account
+└── Workload OU
+    ├── Production Account
+    ├── Staging Account
+    └── Development Account
+```
+
+### 주요 설정
+- **SCP (Service Control Policies)** 적용
+- **AWS Control Tower** 활용한 거버넌스 자동화
+- 계정별 역할 분리 (RBAC)
+
+## 3. 네트워크 보안 아키텍쳐
+
+### VPC 설계
+```
+Internet Gateway
+       ↓
+[Public Subnet - ALB/NLB]
+       ↓
+[Private Subnet - Application]
+       ↓
+[Isolated Subnet - Database]
+```
+
+### 핵심 구성요소
+
+**AWS Network Firewall**
+- 상태 저장 방화벽
+- IDS/IPS 기능
+- Domain 필터링
+
+**Security Groups & NACLs**
+- Security Groups: 상태 저장, 인스턴스 레벨
+- NACLs: 상태 비저장, 서브넷 레벨
+
+**VPC Flow Logs**
+- 네트워크 트래픽 모니터링
+- CloudWatch Logs 또는 S3로 전송
+
+## 4. 데이터 보호
+
+### 암호화 전략
+
+**전송 중 암호화**
+- TLS 1.2 이상 강제
+- AWS Certificate Manager(ACM) 활용
+- VPN/Direct Connect를 통한 전용 연결
+
+**저장 데이터 암호화**
+- AWS KMS를 통한 키 관리
+- Customer Managed Keys(CMK) 사용
+- 자동 키 로테이션 활성화
+
+### 데이터 분류 및 보호
+```yaml
+데이터 분류:
+  Public: 암호화 선택
+  Internal: 서버 측 암호화(SSE)
+  Confidential: CMK + 접근 로깅
+  Restricted: CMK + VPC Endpoint + 접근 제한
+```
+
+## 5. 식별 및 접근 관리 (IAM)
+
+### IAM 모범 사례
+
+**역할 기반 접근**
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::my-bucket/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:PrincipalOrgID": "o-xxxxxxxxx"
+        }
+      }
+    }
+  ]
+}
+```
+
+**권장 구성**
+- MFA 필수 활성화
+- 루트 계정 사용 금지
+- IAM Access Analyzer 활용
+- 권한 경계(Permission Boundaries) 설정
+
+### AWS SSO (Identity Center)
+- 중앙 집중식 접근 관리
+- SAML 2.0 기반 페더레이션
+- 임시 자격 증명 사용
+
+## 6. 위협 탐지 및 대응
+
+### 보안 모니터링 스택
+
+**Amazon GuardDuty**
+- 지능형 위협 탐지
+- VPC Flow Logs, CloudTrail, DNS 로그 분석
+- 머신러닝 기반 이상 탐지
+
+**AWS Security Hub**
+- 통합 보안 대시보드
+- 자동화된 컴플라이언스 점검
+- CIS, PCI-DSS 벤치마크
+
+**Amazon Detective**
+- 보안 조사 및 분석
+- 시각화된 조사 그래프
+- 근본 원인 분석
+
+### SIEM 통합 아키텍쳐
+```
+CloudTrail ──┐
+GuardDuty ───┤
+Security Hub ├──→ EventBridge ──→ Lambda ──→ SIEM
+Config ──────┤                              (Splunk/ELK)
+Macie ───────┘
+```
+
+## 7. 애플리케이션 보안
+
+### WAF & Shield
+```yaml
+AWS WAF 규칙:
+  - Rate Limiting: 요청 제한
+  - SQL Injection: 차단
+  - XSS: 크로스 사이트 스크립팅 방어
+  - Geo Blocking: 지역별 차단
+  - Bot Control: 봇 탐지 및 관리
+
+AWS Shield:
+  - Standard: 자동 DDoS 방어
+  - Advanced: 고급 DDoS 방어 + SRT 지원
+```
+
+### Secrets Management
+- **AWS Secrets Manager**: 자격 증명 자동 로테이션
+- **Systems Manager Parameter Store**: 구성 데이터 저장
+- 애플리케이션 코드에서 하드코딩 금지
+
+## 8. 컴플라이언스 및 거버넌스
+
+### AWS Config 규칙
+```
+자동 규정 준수 점검:
+✓ 암호화되지 않은 EBS 볼륨 탐지
+✓ 공개 S3 버킷 식별
+✓ 미사용 IAM 자격 증명 탐지
+✓ Security Group 개방 포트 점검
+```
+
+### 감사 및 로깅
+- **CloudTrail**: 모든 API 호출 기록
+- **다중 리전 추적** 활성화
+- **로그 파일 무결성 검증** 설정
+- S3 버킷 암호화 및 MFA Delete 활성화
+
+## 9. 인시던트 대응 플레이북
+
+### 자동화된 대응 시나리오
+
+**예시: 의심스러운 IAM 활동 탐지**
+```
+GuardDuty 알림
+    ↓
+EventBridge 규칙 트리거
+    ↓
+Lambda 함수 실행
+    ↓
+1. 사용자 격리 (권한 제거)
+2. SNS 알림 발송
+3. 티켓 생성 (JIRA/ServiceNow)
+4. 포렌식 스냅샷 생성
+```
+
+### 대응 체크리스트
+1. **탐지**: GuardDuty/Security Hub 알림
+2. **격리**: 영향받은 리소스 분리
+3. **조사**: Detective/CloudWatch Logs 분석
+4. **복구**: 안전한 백업에서 복원
+5. **사후 검토**: 근본 원인 분석 및 개선
+
+## 10. 서버리스 보안
+
+### Lambda 보안 모범 사례
+- **VPC 내 Lambda 실행** (필요시)
+- **환경 변수 암호화** (KMS)
+- **최소 권한 IAM 역할**
+- **리소스 기반 정책** 활용
+
+### API Gateway 보안
+```yaml
+보안 계층:
+  - Lambda Authorizer (커스텀 인증)
+  - Cognito User Pools
+  - API Keys + Usage Plans
+  - Resource Policies
+  - WAF 통합
+```
+
+## 11. 컨테이너 보안
+
+### EKS 보안 아키텍쳐
+```
+Pod Security Standards
+    ↓
+Network Policies (Calico)
+    ↓
+IRSA (IAM Roles for Service Accounts)
+    ↓
+Secrets (External Secrets Operator)
+    ↓
+Image Scanning (ECR)
+```
+
+### 주요 도구
+- **Amazon ECR Image Scanning**: 취약점 스캔
+- **Falco**: 런타임 보안 모니터링
+- **OPA/Gatekeeper**: 정책 기반 거버넌스
+
+## 12. 비용 최적화된 보안
+
+### 우선순위 기반 접근
+```
+필수 (Tier 1):
+- IAM + MFA
+- CloudTrail
+- Security Groups
+- Encryption at rest
+
+권장 (Tier 2):
+- GuardDuty
+- Security Hub
+- Config
+
+고급 (Tier 3):
+- Macie
+- Detective
+- Network Firewall
+```
+
+## 13. 자동화 및 IaC
+
+### Terraform 예시
+```hcl
+module "security_baseline" {
+  source = "./modules/security"
+  
+  enable_guardduty    = true
+  enable_security_hub = true
+  enable_config       = true
+  
+  cloudtrail_bucket   = "org-audit-logs"
+  log_retention_days  = 365
+  
+  tags = {
+    Environment = "Production"
+    Compliance  = "PCI-DSS"
+  }
+}
+```
+
+## 14. 지속적인 보안 개선
+
+### DevSecOps 파이프라인
+```
+Code → SAST → Build → Container Scan → Deploy → DAST → Monitor
+       ↓                    ↓                      ↓        ↓
+   SonarQube            Trivy/Snyk            OWASP ZAP  GuardDuty
+```
+
+### 정기 점검 사항
+- [ ] 월간 IAM 권한 검토
+- [ ] 분기별 보안 그룹 감사
+- [ ] 분기별 재해 복구 훈련
+- [ ] 반기별 침투 테스트
+- [ ] 연간 아키텍쳐 리뷰
+
+## 15. 참고 리소스
+
+- **AWS Well-Architected Framework** - Security Pillar
+- **CIS AWS Foundations Benchmark**
+- **NIST Cybersecurity Framework**
+- **AWS Security Best Practices Whitepaper**
+
+---
+
+이 가이드를 특정 산업이나 컴플라이언스 요구사항(예: HIPAA, GDPR, 금융권)에 맞춰 더 상세히 설명해드릴까요?
